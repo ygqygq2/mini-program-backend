@@ -1,0 +1,11 @@
+{
+  "verbose": true,
+  "watch": [],
+  "ext": "js,mjs,json,ts",
+  "ignore": [
+    "*.test.js",
+    "*.test.ts",
+    "fixtures/*"
+  ],
+  "execMap": {}
+}

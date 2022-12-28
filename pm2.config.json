@@ -1,0 +1,16 @@
+{
+  "app": {
+    "name": "template", // * 服务名称
+    "script": "bin/www", // * 执行脚本
+    "watch": true, // * 文件改动后是否自动重启
+    "ignore_watch": [ // * 忽视改动文件
+      "node_modules",
+      "logs",
+      "updateFiles"
+    ],
+    "instances": 8, // * 多服务进程数量（一般与 cpu 核心数量一致）
+    "error_file": "./logs/err.log", // * 错误日志输出文件
+    "out_file": "./logs/out.log", // * 一般日志输出文件
+    "log_date_format": "YYY-MM-DD HH:mm:ss" // * 日志文件日期格式化标准
+  }
+}

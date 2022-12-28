@@ -1,0 +1,21 @@
+{
+  // Use IntelliSense to understand related attributes.
+  // Hover to see descriptions of existing properties.
+  // For more information, please visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Koa2 Server",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_ENV": "dev"
+      },
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "runtimeArgs": ["-r", "ts-node/register"],
+      "args": ["${workspaceFolder}/bin/www.ts"],
+      "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"]
+    }
+  ]
+}

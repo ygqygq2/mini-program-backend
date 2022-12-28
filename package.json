@@ -1,0 +1,106 @@
+{
+  "name": "miniprogram-server",
+  "description": "",
+  "author": "",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env NODE_ENV=dev nodemon -e ts --exec ts-node -r tsconfig-paths/register bin/www",
+    "dev:tsc": "cross-env NODE_ENV=dev tsc -w",
+    "start": "ts-node -r tsconfig-paths/register bin/www",
+    "prd": "cross-env NODE_ENV=production pm2 start pm2.config.json",
+    "test": "cross-env NODE_ENV=test jest --runInBand --pforceExit --colors",
+    "build": "pnpm run rm-dist && pnpm run build-ts && pnpm run copy-static",
+    "build-ts": "tsc -b ./ --verbose",
+    "copy-static": "ts-node copy-static.ts",
+    "rm-dist": "ts-node rm-dist.ts",
+    "apidoc": "apidoc -i ./src/routes -o ./src/apidoc/dist -c ./src/apidoc",
+    "lint": "eslint src",
+    "lint:fix": "eslint src test --fix",
+    "lint-staged": "lint-staged --allow-empty",
+    "lint-staged:js": "eslint --ext .js,.jsx,.ts,.tsx ",
+    "new": "plop",
+    "prepush": "pnpm run lint",
+    "postinstall": "simple-git-hooks",
+    "preinstall": "npx only-allow pnpm",
+    "commit": "git cz",
+    "release": "bumpp"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": "pnpm run lint-staged:js",
+    "**/*.{js,jsx,tsx,ts,less,md,json}": [
+      "prettier --write"
+    ]
+  },
+  "dependencies": {
+    "@koa/router": "^12.0.0",
+    "debug": "^4.3.4",
+    "dotenv": "^16.0.3",
+    "koa": "^2.14.1",
+    "koa-bodyparser": "^4.3.0",
+    "koa-convert": "^2.0.0",
+    "koa-favicon": "^2.1.0",
+    "koa-generic-session": "^2.3.0",
+    "koa-json": "^2.0.2",
+    "koa-logger": "^3.2.1",
+    "koa-onerror": "^4.2.0",
+    "koa-static": "^5.0.0",
+    "koa-views": "8.0.0",
+    "koa2-cors": "^2.0.6",
+    "mongoose": "^6.8.0",
+    "pug": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.7",
+    "@types/jest": "^29.2.4",
+    "@types/koa": "^2.13.5",
+    "@types/koa-bodyparser": "^4.3.10",
+    "@types/koa-favicon": "^2.0.21",
+    "@types/koa-generic-session": "^2.2.1",
+    "@types/koa-json": "^2.0.20",
+    "@types/koa-logger": "^3.1.2",
+    "@types/koa-static": "^4.0.2",
+    "@types/koa2-cors": "^2.0.2",
+    "@types/koa__router": "^12.0.0",
+    "@types/node": "^18.11.12",
+    "@types/shelljs": "^0.8.11",
+    "@types/supertest": "^2.0.12",
+    "@typescript-eslint/eslint-plugin": "^5.46.0",
+    "bumpp": "^8.2.1",
+    "cross-env": "^7.0.3",
+    "cz-git": "^1.4.0",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "eslint-plugin-tsdoc": "^0.2.17",
+    "lint-staged": "^13.1.0",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.1",
+    "shelljs": "^0.8.5",
+    "should": "^13.2.3",
+    "simple-git-hooks": "^2.8.1",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.1.1",
+    "tslib": "^2.4.1",
+    "typescript": "*"
+  },
+  "engines": {
+    "node": ">=8.10.0"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "pnpm lint-staged",
+    "preserveUnused": true
+  },
+  "config": {
+    "commitizen": {
+      "path": "node_modules/cz-git"
+    }
+  }
+}
