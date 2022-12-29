@@ -8,6 +8,7 @@ import logger from "koa-logger";
 import session from "koa-generic-session";
 import cors from "koa2-cors";
 import koaStatic from "koa-static";
+import koajwt from "koa-jwt";
 import index from "./routes/index";
 import users from "./routes/user";
 
@@ -68,6 +69,36 @@ app.use(async (ctx, next) => {
   ctx.cookies.set("view", n.toString(), { httpOnly: false });
   await next();
 });
+
+// 错误处理，被 koajwt 挡住的请求
+// 没有 token 或者 token 过期，则会返回 401
+// 与下面的 koajwt 设置是组合使用的
+app.use(async (ctx, next) => {
+  try {
+    await next();
+  } catch (err) {
+    if (typeof err === "object" && err !== null) {
+      // if (err.status === 401) {
+      ctx.status = 401;
+      ctx.body = {
+        code: 401,
+        msg: "Protected resource, use Authorization header to get access",
+      };
+      // }
+    } else {
+      throw err;
+    }
+  }
+});
+
+// jwt 配置
+const JWT_SECRET = "jwt";
+// 如果没有验证通过，返回 404
+app.use(
+  koajwt({ secret: JWT_SECRET }).unless({
+    path: ["/user/login", /\/user\/weixin-login\d?/, "/user/web-view"],
+  })
+);
 
 // routes
 app.use(index.routes()).use(index.allowedMethods());

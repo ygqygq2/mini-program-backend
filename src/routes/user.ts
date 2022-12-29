@@ -1,73 +1,62 @@
 import Router from "@koa/router";
 // import { Context, Next } from "koa";
 import { type Context, type Next } from "koa";
-import { login, register } from "@/controller/user";
-import loginCheck from "@/middleware/loginCheck";
+import jsonwebtoken from "jsonwebtoken";
 
+// jwt 配置
+const JWT_SECRET = "jwt";
 const router = new Router({
-  prefix: "/api/user",
+  prefix: "/user",
 });
 
-interface IsExistParam {
-  username: string;
-  password: string;
-}
-
-// 获取用户信息
-router.get("/getUserInfo", loginCheck, async (ctx: Context, next: Next) => {
-  if (<any>ctx.session && (<any>ctx.session).userInfo) {
-    ctx.body = {
-      errno: 0,
-      data: (<any>ctx.session).userInfo || {},
-    };
-  } else {
-    ctx.throw(401, "用户未登录");
-  }
-});
-
-// 登录
-router.post("/login", async (ctx: Context, next: Next) => {
-  // 获取请求参数
-  const { username, password } = ctx.request.body as IsExistParam;
-  // 验证登录
-  const res = await login(username, password);
-  // 登录成功，设置 session
-  if (res) {
-    // 设置 session
-    if (<any>ctx.session && (<any>ctx.session).userInfo) {
-      (<any>ctx.session).userInfo = { username };
+router.use(async (ctx, next) => {
+  // 如果不是登录页，
+  // 还有web-view，这是为了测试方便
+  if (!ctx.url.includes("login") && !ctx.url.includes("web-view")) {
+    try {
+      let token = ctx.request.header.authorization || "";
+      console.log("token", token);
+      token = token.split(" ")[1];
+      // 如果签名不对，这里会报错，走到catch分支
+      const payload = await util.promisify(jsonwebtoken.verify)(token, JWT_SECRET);
+      console.log("payload", payload);
+      // 404 bug
+      await next();
+    } catch (err) {
+      console.log("err", err);
+      throw err;
     }
-
-    // 返回
-    ctx.body = {
-      errno: 0,
-    };
   } else {
-    ctx.body = {
-      errno: -1,
-      message: "登录失败",
-    };
+    // 这里status状态不对，也会返回404
+    // 所有next都要加await，重要！
+    await next();
   }
 });
 
-// 用户注册
-router.post("/register", async (ctx: Context, next: Next) => {
-  // 获取请求中的用户信息
-  const userInfo = ctx.request.body || {};
-  // 调用注册方法
-  try {
-    const newUser = await register(userInfo);
-    // 注册成功
+// 登陆
+router.get("/login", function (ctx) {
+  const { user, password } = ctx.request.query;
+  // console.log(user,password);
+
+  // 省略查库过程，将验证过程硬编码
+  if (user == "ygqygq2" && password == "ly") {
+    ctx.status = 200;
     ctx.body = {
-      errno: 0,
-      data: newUser,
+      code: 200,
+      msg: "Login Successful",
+      token:
+        "Bearer " +
+        jsonwebtoken.sign(
+          { name: user }, // Encrypt userToken
+          JWT_SECRET,
+          { expiresIn: "1d" }
+        ),
     };
-  } catch (ex) {
-    // 注册失败
-    console.error("注册失败", ex);
+  } else {
+    ctx.status = 400;
     ctx.body = {
-      errno: -1,
-      message: "注册失败",
+      code: 400,
+      msg: "User name password mismatch",
     };
   }
 });
