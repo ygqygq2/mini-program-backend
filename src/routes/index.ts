@@ -1,5 +1,9 @@
+import config from "../../config";
 import Router from "@koa/router";
-import { Context, Next } from "koa";
+import {Context, Next} from "koa";
+import jsonwebtoken from "jsonwebtoken";
+import * as WeixinAuth from "../utils/weixinAuth";
+
 const router = new Router();
 
 router.get("/", async (ctx: Context, next: Next) => {
@@ -76,7 +80,9 @@ router.post("/wexin-login2", async (ctx) => {
   const decryptedUserInfo = pc.decryptData(encryptedData, iv);
   console.log("解密后 decryptedUserInfo.openId: ", decryptedUserInfo.openId);
 
-  let authorizationToken = jsonwebtoken.sign({ name: decryptedUserInfo.nickName }, JWT_SECRET, { expiresIn: "1d" });
+  const authorizationToken = jsonwebtoken.sign({ name: decryptedUserInfo.nickName }, config.JWT_SECRET, {
+    expiresIn: "1d",
+  });
   Object.assign(decryptedUserInfo, { authorizationToken });
 
   ctx.status = 200;

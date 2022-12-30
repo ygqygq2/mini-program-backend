@@ -1,10 +1,10 @@
+import config from "../../config";
 import Router from "@koa/router";
 // import { Context, Next } from "koa";
 import { type Context, type Next } from "koa";
 import jsonwebtoken from "jsonwebtoken";
 
 // jwt 配置
-const JWT_SECRET = "jwt";
 const router = new Router({
   prefix: "/user",
 });
@@ -18,7 +18,7 @@ router.use(async (ctx, next) => {
       console.log("token", token);
       token = token.split(" ")[1];
       // 如果签名不对，这里会报错，走到catch分支
-      const payload = await util.promisify(jsonwebtoken.verify)(token, JWT_SECRET);
+      const payload = await util.promisify(jsonwebtoken.verify)(token, config.JWT_SECRET);
       console.log("payload", payload);
       // 404 bug
       await next();
