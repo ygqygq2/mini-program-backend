@@ -1,7 +1,8 @@
 import config from "../../config";
 import Router from "@koa/router";
 // import { Context, Next } from "koa";
-import { type Context, type Next } from "koa";
+import {type Context, type Next} from "koa";
+import util from "util";
 import jsonwebtoken from "jsonwebtoken";
 
 // jwt 配置
@@ -18,7 +19,8 @@ router.use(async (ctx, next) => {
       console.log("token", token);
       token = token.split(" ")[1];
       // 如果签名不对，这里会报错，走到catch分支
-      const payload = await util.promisify(jsonwebtoken.verify)(token, config.JWT_SECRET);
+      // const payload = await util.promisify(jsonwebtoken.verify)(token, config.JWT_SECRET);
+      const payload = await util.promisify(jsonwebtoken.verify)(token);
       console.log("payload", payload);
       // 404 bug
       await next();
@@ -39,7 +41,7 @@ router.get("/login", function (ctx) {
   // console.log(user,password);
 
   // 省略查库过程，将验证过程硬编码
-  if (user == "ygqygq2" && password == "ly") {
+  if (user == "ygqygq2" && password == "ygqygq2") {
     ctx.status = 200;
     ctx.body = {
       code: 200,
@@ -48,7 +50,7 @@ router.get("/login", function (ctx) {
         "Bearer " +
         jsonwebtoken.sign(
           { name: user }, // Encrypt userToken
-          JWT_SECRET,
+          config.JWT_SECRET,
           { expiresIn: "1d" }
         ),
     };

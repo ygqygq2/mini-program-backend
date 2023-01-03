@@ -2,7 +2,8 @@ import config from "../../config";
 import Router from "@koa/router";
 import {Context, Next} from "koa";
 import jsonwebtoken from "jsonwebtoken";
-import * as WeixinAuth from "../utils/weixinAuth";
+import WeixinAuth from "../utils/wxAuth";
+import weixinDataCrypt from "../utils/wxDataCrypt";
 
 const router = new Router();
 
@@ -51,7 +52,7 @@ const weixinAuth = new WeixinAuth(miniProgramAppId, miniProgramAppSecret);
 router.post("/wexin-login1", async (ctx: Context) => {
   const { code } = ctx.request.body as any;
 
-  const token = await weixinAuth.getAccessToken(code);
+  const token = await weixinAuth.getAccessToken(code) as any;
   // const accessToken = token.data.access_token;
   const openid = token.data.openid;
 
@@ -73,10 +74,10 @@ router.post("/wexin-login2", async (ctx) => {
   const { code, userInfo, encryptedData, iv } = ctx.request.body as any;
 
   const token = await weixinAuth.getAccessToken(code);
-  const sessionKey = token.data.session_key;
+  const sessionKey = (token as any).data.session_key;
   console.log("sessionKey", sessionKey);
 
-  const pc = new WXBizDataCrypt(miniProgramAppId, sessionKey);
+  const pc = new weixinDataCrypt(miniProgramAppId, sessionKey);
   const decryptedUserInfo = pc.decryptData(encryptedData, iv);
   console.log("解密后 decryptedUserInfo.openId: ", decryptedUserInfo.openId);
 
