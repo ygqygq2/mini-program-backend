@@ -11,6 +11,7 @@ import koaStatic from "koa-static";
 import koajwt from "koa-jwt";
 import index from "./routes/index";
 import users from "./routes/user";
+import config from "../config";
 
 const app = new Koa();
 
@@ -20,7 +21,7 @@ onerror(app);
 // 服务端支持跨域
 app.use(
   cors({
-    origin: "http://localhost:8080", // 允许跨域的域名
+    origin: "http://localhost:17180", // 允许跨域的域名
     credentials: true, // 允许跨域携带cookie
   })
 );
@@ -91,11 +92,9 @@ app.use(async (ctx, next) => {
   }
 });
 
-// jwt 配置
-const JWT_SECRET = "jwt";
 // 如果没有验证通过，返回 404
 app.use(
-  koajwt({ secret: JWT_SECRET }).unless({
+  koajwt({ secret: config.jwtSecret }).unless({
     path: ["/user/login", /\/user\/weixin-login\d?/, "/user/web-view"],
   })
 );

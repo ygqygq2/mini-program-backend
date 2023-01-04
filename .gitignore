@@ -23,3 +23,5 @@ pnpm-debug.log*
 
 # history files
 .history
+
+.eslintcache

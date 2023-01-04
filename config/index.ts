@@ -14,7 +14,11 @@ const config = {
     db_password: process.env.DB_PASSWORD,
     db_port: process.env.DB_PORT,
   },
-  JWT_SECRET: "jwt",
+  jwtSecret: "JWTSECRET",
+  miniProgram: {
+    appId: "wxc3db312ddf9bcb01",
+    appSecret: "6bb4f303f55a5893fac810e2ab56faa1",
+  },
 };
 
 export default config;
